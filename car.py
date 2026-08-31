@@ -1,5 +1,5 @@
 import pygame, math
-from utils import scale_image, blit_rotate_center
+from utils import scale_image
 
 WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
 
@@ -7,16 +7,34 @@ WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
 class AbstractCar:
     def __init__(self, max_vel, rotation_vel, acceleration=.1):
         self.img = self.IMG
+        
+        self.pos = pygame.Vector2(self.START_POS)
+        
         self.max_vel = max_vel
         self.rotation_vel = rotation_vel
+        self.acceleration = acceleration
+        
         self.vel = 0
         self.angle = 0
-        self.x, self.y = self.START_POS
-        self.acceleration = acceleration
+        
         self.destroyed = False
+        
+        self.update_car()
     
-    def draw(self, win):
-        blit_rotate_center(win, self.img, (self.x, self.y), self.angle)
+    def update_car(self):
+        self.rotated_image = pygame.transform.rotate(self.img, self.angle)
+        self.rotated_rect = self.rotated_image.get_rect(center=self.img.get_rect(topleft=self.pos).center)
+        self.mask = pygame.mask.from_surface(self.rotated_image)
+    
+    def draw(self, win, show_mask=False, show_rect=False, mask_color=(255,0,0), rect_color=(255,0,0)):
+        win.blit(self.rotated_image, self.rotated_rect.topleft)
+        
+        if show_mask:
+            win.blit(self.mask.to_surface(setcolor=mask_color, unsetcolor=(0,0,0,0)), self.rotated_rect.topleft)
+        if show_rect:
+            pygame.draw.rect(win, rect_color, self.rotated_rect, 2)
+        
+        self.update_car()
 
     def rotate(self, left=False, right=False):
         if self.destroyed:
@@ -26,6 +44,8 @@ class AbstractCar:
             self.angle += self.rotation_vel
         elif right:
             self.angle -= self.rotation_vel
+        
+        self.update_car()
     
     def move(self):
         if self.destroyed:
@@ -35,8 +55,10 @@ class AbstractCar:
         vertical = math.cos(radians) * self.vel
         horizontal = math.sin(radians) * self.vel
         
-        self.x -= horizontal
-        self.y -= vertical
+        self.pos.x -= horizontal
+        self.pos.y -= vertical
+        
+        self.update_car()
     
     def move_forward(self):
         self.vel = min(self.vel + self.acceleration, self.max_vel)
@@ -50,10 +72,8 @@ class AbstractCar:
         if self.destroyed:
             return
         
-        car_mask = pygame.mask.from_surface(self.img)
-        offset = (int(self.x - x), int(self.y - y))
-        poi = mask.overlap(car_mask, offset) # point of intersection
-        return poi
+        offset = (int(self.rotated_rect.x - x), int(self.rotated_rect.y - y))
+        return mask.overlap(self.mask, offset)
     
     
 
