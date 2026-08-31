@@ -40,14 +40,16 @@ images = [(TRACK, (0,0))]
 while run:
     clock.tick(FPS)
     
-    draw(WINDOW, images, player_car)
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
             break
     
+    # Atualiza o estado do carro e só depois desenha
     player_movement(player_car)
+    player_car.update_car()
+    
+    draw(WINDOW, images, player_car)
     
     if player_car.collide(TRACK_BORDER_MASK) is not None:
         player_car.destroyed = True

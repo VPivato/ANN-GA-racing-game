@@ -30,11 +30,10 @@ class AbstractCar:
         win.blit(self.rotated_image, self.rotated_rect.topleft)
         
         if show_mask:
+            # mask.to_surface é uma operação custosa, desligar quando houver muitos carros
             win.blit(self.mask.to_surface(setcolor=mask_color, unsetcolor=(0,0,0,0)), self.rotated_rect.topleft)
         if show_rect:
             pygame.draw.rect(win, rect_color, self.rotated_rect, 2)
-        
-        self.update_car()
 
     def rotate(self, left=False, right=False):
         if self.destroyed:
@@ -44,8 +43,6 @@ class AbstractCar:
             self.angle += self.rotation_vel
         elif right:
             self.angle -= self.rotation_vel
-        
-        self.update_car()
     
     def move(self):
         if self.destroyed:
@@ -57,8 +54,6 @@ class AbstractCar:
         
         self.pos.x -= horizontal
         self.pos.y -= vertical
-        
-        self.update_car()
     
     def move_forward(self):
         self.vel = min(self.vel + self.acceleration, self.max_vel)
