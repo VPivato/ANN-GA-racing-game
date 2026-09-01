@@ -1,6 +1,6 @@
-import pygame
+import pygame, numpy as np
 from car import PlayerCar
-from track import TRACK, TRACK_BORDER_MASK
+from track import *
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -14,7 +14,7 @@ def draw(win, images, player_car):
     for img, pos in images:
         win.blit(img, pos)
     
-    player_car.draw(win, show_mask=False, show_rect=False)
+    player_car.draw(win, show_mask=False, show_rect=False, show_rays=True)
     pygame.display.update()
 
 def player_movement(player_car):

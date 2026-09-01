@@ -5,7 +5,8 @@ def scale_image(image, factor):
     return pygame.transform.scale(image, size)
 
 def normalize_angle(angle):
-    angle = math.radians(angle)
-    if angle < 0:
-        angle = 2 * math.pi + angle
-    return angle
+    return math.radians(angle) % (2 * math.pi)
+
+def get_direction(angle):
+        radians = math.radians(angle)
+        return pygame.Vector2(math.sin(radians), math.cos(radians))

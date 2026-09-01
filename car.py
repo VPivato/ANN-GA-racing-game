@@ -1,6 +1,6 @@
 import pygame, math
 from raycaster import Raycaster
-from utils import scale_image
+from utils import *
 
 WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
 
@@ -24,19 +24,13 @@ class AbstractCar:
         
         self.update_car()
     
-    def get_direction(self):
-        radians = math.radians(self.angle)
-        vertical = math.cos(radians)
-        horizontal = math.sin(radians)
-        return pygame.Vector2(horizontal, vertical)
-    
     def update_car(self):
         self.rotated_image = pygame.transform.rotate(self.img, self.angle)
         self.rotated_rect = self.rotated_image.get_rect(center=self.img.get_rect(topleft=self.pos).center)
         self.mask = pygame.mask.from_surface(self.rotated_image)
         self.raycaster.cast_all_rays()
     
-    def draw(self, win, show_mask=False, show_rect=False, mask_color=(255,0,0), rect_color=(255,0,0)):
+    def draw(self, win, show_mask=False, show_rect=False, show_rays=False, mask_color=(255,0,0), rect_color=(255,0,0), ray_color=(255,0,0)):
         win.blit(self.rotated_image, self.rotated_rect.topleft)
         
         if show_mask:
@@ -44,8 +38,8 @@ class AbstractCar:
             win.blit(self.mask.to_surface(setcolor=mask_color, unsetcolor=(0,0,0,0)), self.rotated_rect.topleft)
         if show_rect:
             pygame.draw.rect(win, rect_color, self.rotated_rect, 2)
-        
-        self.raycaster.draw(win)
+        if show_rays:
+            self.raycaster.draw(win)
 
     def rotate(self, left=False, right=False):
         if self.destroyed:
@@ -55,12 +49,14 @@ class AbstractCar:
             self.angle += self.rotation_vel
         elif right:
             self.angle -= self.rotation_vel
+        
+        self.angle %= 360
     
     def move(self):
         if self.destroyed:
             return
         
-        self.pos -= self.get_direction() * self.vel
+        self.pos -= get_direction(self.angle) * self.vel
     
     def move_forward(self):
         self.vel = min(self.vel + self.acceleration, self.max_vel)
