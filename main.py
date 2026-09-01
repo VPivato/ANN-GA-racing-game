@@ -14,7 +14,7 @@ def draw(win, images, player_car):
     for img, pos in images:
         win.blit(img, pos)
     
-    player_car.draw(win, show_mask=True, show_rect=True)
+    player_car.draw(win, show_mask=False, show_rect=False)
     pygame.display.update()
 
 def player_movement(player_car):
