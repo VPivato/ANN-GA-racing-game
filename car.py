@@ -1,4 +1,4 @@
-import pygame
+import pygame, numpy as np
 from raycaster import Raycaster
 from utils import scale_image, get_direction
 
@@ -73,7 +73,9 @@ class AbstractCar:
         offset = (int(self.rotated_rect.x - x), int(self.rotated_rect.y - y))
         return mask.overlap(self.mask, offset)
     
-    
+    def get_sensor_readings(self):
+        return np.array([float(ray.distance) for ray in self.raycaster.rays])
+
 
 class PlayerCar(AbstractCar):
     IMG = WHITE_CAR

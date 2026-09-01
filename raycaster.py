@@ -26,16 +26,16 @@ class Ray:
         valid = (xs >= 0) & (xs < border_array.shape[0]) & (ys >= 0) & (ys < border_array.shape[1])
         xs, ys, steps = xs[valid], ys[valid], steps[valid]
         
-        # Ao colidir com a parede, o valor -1 era retornado. Conversão em valor positivo para argmax funcionar
         hits = border_array[xs, ys]
         
         self.distance = steps[np.argmax(hits)] if hits.any() else MAX_DISTANCE
+        self.distance /= MAX_DISTANCE # normalização entre 0 e 1
     
     def draw(self, win, ray_color):
         pygame.draw.line(
             win, ray_color,
             self.car.rotated_rect.center,
-            self.car.rotated_rect.center - get_direction(self.ray_angle) * self.distance
+            self.car.rotated_rect.center - get_direction(self.ray_angle) * self.distance * MAX_DISTANCE
         )
 
 
