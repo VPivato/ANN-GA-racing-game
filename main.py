@@ -1,6 +1,6 @@
 import pygame, numpy as np
 from car import PlayerCar
-from track import *
+from track import TRACK, TRACK_BORDER_MASK
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))

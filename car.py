@@ -1,6 +1,6 @@
-import pygame, math
+import pygame
 from raycaster import Raycaster
-from utils import *
+from utils import scale_image, get_direction
 
 WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
 
@@ -39,7 +39,7 @@ class AbstractCar:
         if show_rect:
             pygame.draw.rect(win, rect_color, self.rotated_rect, 2)
         if show_rays:
-            self.raycaster.draw(win)
+            self.raycaster.draw(win, ray_color)
 
     def rotate(self, left=False, right=False):
         if self.destroyed:
