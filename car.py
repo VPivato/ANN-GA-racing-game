@@ -3,6 +3,7 @@ from raycaster import Raycaster
 from utils import scale_image, get_direction
 
 WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
+RED_CAR = scale_image(pygame.image.load("img/red-car.png"), .55)
 
 
 class AbstractCar:
@@ -79,4 +80,19 @@ class AbstractCar:
 
 class PlayerCar(AbstractCar):
     IMG = WHITE_CAR
-    START_POS = (180, 200)
+    START_POS = (205, 200)
+
+
+class ComputerCar(AbstractCar):
+    IMG = RED_CAR
+    START_POS = (165, 200)
+    
+    def decision(self):
+        choices = [self.move_forward,
+                   lambda: self.rotate(left=True),
+                   lambda: self.rotate(right=True)
+        ]
+        
+        choice = np.random.choice(choices)
+        choice()
+            
