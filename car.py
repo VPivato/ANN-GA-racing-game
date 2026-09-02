@@ -34,7 +34,7 @@ class AbstractCar:
         self.raycaster.cast_all_rays()
     
     def draw(self,
-             win:pygame.surface,
+             win:pygame.Surface,
              show_mask:bool = False,
              show_rect:bool = False,
              show_rays:bool = False,
@@ -56,9 +56,9 @@ class AbstractCar:
             self.raycaster.draw(win, ray_color)
     
     def rotate(self, amount:float) -> None:
-        """"Muda o ângulo do carro baseado no valor de amount.
+        """Muda o ângulo do carro baseado no valor de amount.
         
-        Agrs:
+        Args:
             amount: Valor no intervalo [-1,1]. Valores negativos rotacionam para a esquerda
             e valores positivos rotacionam para a direita.
         """
@@ -69,9 +69,9 @@ class AbstractCar:
         self.angle -= (self.rotation_vel * amount) % 360
 
     def accelerate(self, amount:float) -> None:
-        """"Aumenta a velocidade do carro até um máximo de max_vel (parâmetro definido na instânciação da classe).
+        """Aumenta a velocidade do carro até um máximo de max_vel (parâmetro definido na instânciação da classe).
         
-        Agrs:
+        Args:
             amount: Valor no intervalo [0,1].
         """
         
@@ -83,7 +83,7 @@ class AbstractCar:
     def brake(self, amount:float):
         """Diminui a velocidade do carro até um mínimo de 0.
         
-        Agrs:
+        Args:
             amount: Valor no intervalo [0,1].
         """
         
@@ -108,7 +108,7 @@ class AbstractCar:
         
         self.pos -= get_direction(self.angle) * self.vel
     
-    def collide(self, mask:pygame.mask, x:int = 0, y:int = 0) -> tuple:
+    def collide(self, mask:pygame.mask.Mask, x:int = 0, y:int = 0) -> tuple | None:
         """Retorna as coordenadas do primeiro pixel que colidiu em uma tupla (x, y), ou None se não houver colisão."""
         
         if self.destroyed:
@@ -117,7 +117,7 @@ class AbstractCar:
         offset = (int(self.rotated_rect.x - x), int(self.rotated_rect.y - y))
         return mask.overlap(self.mask, offset)
     
-    def get_sensor_readings(self) -> np.array:
+    def get_sensor_readings(self) -> np.ndarray:
         """Retorna um np.array contendo a leitura de cada sensor do carro.
         Cada valor normalizado entre [0,1] representa a distância de cada raio até colidirem,
         sendo que "1" significa que o raio não colidiu com nada.
@@ -137,11 +137,12 @@ class ComputerCar(AbstractCar):
     
     def decision(self):
         choices = [lambda: self.accelerate(1),
-                   self.reduce_speed,
+                   lambda: self.brake(1),
                    lambda: self.rotate(-1),
                    lambda: self.rotate(1),
         ]
         
+        self.reduce_speed()
         choice = np.random.choice(choices)
         choice()
             

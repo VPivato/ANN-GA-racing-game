@@ -20,22 +20,17 @@ def draw(win, images, player_car, computer_car):
 
 def player_movement(player_car):
     keys = pygame.key.get_pressed()
-    moving = False
     
     if keys[pygame.K_a]:
         player_car.rotate(-1)
     if keys[pygame.K_d]:
         player_car.rotate(1)
     if keys[pygame.K_w]:
-        moving = True
         player_car.accelerate(1)
     if keys[pygame.K_s]:
-        moving = True
         player_car.brake(1)
     
-    if not moving:
-        player_car.reduce_speed()
-    
+    player_car.reduce_speed()
     player_car.move()
 
 run = True
