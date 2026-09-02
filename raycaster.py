@@ -29,13 +29,12 @@ class Ray:
         hits = border_array[xs, ys]
         
         self.distance = steps[np.argmax(hits)] if hits.any() else MAX_DISTANCE
-        self.distance /= MAX_DISTANCE # normalização entre 0 e 1
     
     def draw(self, win, ray_color):
         pygame.draw.line(
             win, ray_color,
             self.car.rotated_rect.center,
-            self.car.rotated_rect.center - get_direction(self.ray_angle) * self.distance * MAX_DISTANCE
+            self.car.rotated_rect.center - get_direction(self.ray_angle) * self.distance
         )
 
 

@@ -1,4 +1,4 @@
-import pygame, numpy as np
+import pygame
 from car import PlayerCar, ComputerCar
 from track import TRACK, TRACK_BORDER_MASK
 
@@ -22,18 +22,21 @@ def player_movement(player_car):
     keys = pygame.key.get_pressed()
     moving = False
     
-    if keys[pygame.K_SPACE]:
-        computer_car.decision()
     if keys[pygame.K_a]:
-        player_car.rotate(left=True)
+        player_car.rotate(-1)
     if keys[pygame.K_d]:
-        player_car.rotate(right=True)
+        player_car.rotate(1)
     if keys[pygame.K_w]:
         moving = True
-        player_car.move_forward()
+        player_car.accelerate(1)
+    if keys[pygame.K_s]:
+        moving = True
+        player_car.brake(1)
     
     if not moving:
         player_car.reduce_speed()
+    
+    player_car.move()
 
 run = True
 clock = pygame.time.Clock()
@@ -52,11 +55,17 @@ while run:
     # Atualiza o estado do carro e só depois desenha
     player_movement(player_car)
     player_car.update_car()
+    
+    computer_car.decision()
     computer_car.update_car()
+    computer_car.move()
     
     draw(WINDOW, images, player_car, computer_car)
     
     if player_car.collide(TRACK_BORDER_MASK) is not None:
         player_car.destroyed = True
+    
+    if computer_car.collide(TRACK_BORDER_MASK) is not None:
+        computer_car.destroyed = True
 
 pygame.quit()
