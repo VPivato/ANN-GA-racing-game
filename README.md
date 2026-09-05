@@ -12,10 +12,10 @@ Bibliotecas centrais usadas:
 - Python 3.13.15
 - Pygame 2.6.1
 - NumPy 2.5.2
-- Pandas 3.0.5 (planejado)
+- Pandas 3.0.5 (planejado - logging e estatísticas. Rede neural usará apenas NumPy)
 
 Rede Neural:
-- (aspectos gerais sobre a arquitetura da rede neural)
+- (to do)
 
 ## Como funciona
 
@@ -99,7 +99,6 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-###
 5. Instale as dependências.
 ```bash
 pip install -r requirements.txt
@@ -113,3 +112,5 @@ Algum dos materiais usados ao longo do projeto são:
 - ["Can I make a Better AI Than AI"](https://youtu.be/GGWHjAyKJCA?si=wAQap95mO3w7fEDn) do canal [commonLuke](https://www.youtube.com/@commonLuke). Motivação principal do projeto.
 - Playlist ["Pygame Car Racing Tutorial"](https://www.youtube.com/playlist?list=PLzMcBGfZo4-kmY7Nh4kI9kPPnxJ5JMRPj) do canal [Tech With Tim](https://www.youtube.com/@TechWithTim). Os dois primeiros vídeos me auxiliaram a criar o ambiente do jogo.
 - ["Raycasting Tutorial (in Python)"](https://youtu.be/E18bSJezaUE?si=k-GWR9av9XXVNEwh) do canal [Pythonista_](https://www.youtube.com/@pythonista_333). Me apresentou ao conceito de raycasting, usado para os sensores de distância do carro.
+- ["Building a neural network FROM SCRATCH (no Tensorflow/Pytorch, just numpy & math)"](https://youtu.be/w8yWXqWQYmU?si=Zrc4kZJAmwRXX1E0) do canal [Samson Zhang](https://www.youtube.com/@SamsonZhangTheSalmon). O diagrama exibido no vídeo me ajudou a implementar a rede neural.
+- ["Forward Propagation in Neural Networks"](https://www.geeksforgeeks.org/deep-learning/forward-propagation-in-neural-networks/). Bom material de apoio.
