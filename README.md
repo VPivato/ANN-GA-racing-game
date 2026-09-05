@@ -24,7 +24,7 @@ Lógica do carro
 ```mermaid
 flowchart TD
     A[Carro] --  Velocidade e sensores --> B((Rede Neural))
-    B -- Direção, aceleração e freio --> C[Ação]
+    B -- Direção, aceleração --> C[Ação]
 ```
 
 <hr />
@@ -40,10 +40,9 @@ flowchart TD
     H -- Não --> D
 ```
 
-A rede neural recebe 9 valores iniciais: velocidade e a leitura dos 8 sensores de distância. E retorna três, que controlam a decisão do carro a cada frame:
+A rede neural recebe 9 valores iniciais: velocidade e a leitura dos 8 sensores de distância. E retorna dois, que controlam a decisão do carro a cada frame:
 - Um valor [-1, 1] que representa a direção de rotação. Valores intermediários, como 0.5, significam uma rotação mais suave.
-- Um valor [0, 1] que representa a quantidade de aceleração, aumentando a velocidade do carro. 
-- Um valor [0, 1] que representa a quantidade de freio, diminuindo a velocidade do carro.
+- Um valor [-1, 1] que representa a quantidade de aceleração. Valores negativos freiam o carro, em vez de acelerar.
 
 Ao fim de cada geração de treinamento, os melhores carros (critério de fitness a ser decidido) são selecionados pelo Algoritmo Genético para reproduzir ([crossover](https://www.geeksforgeeks.org/machine-learning/crossover-in-genetic-algorithm/)) e gerar descendentes mais aptos. O ciclo continua por N gerações.
 

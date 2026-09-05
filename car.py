@@ -145,12 +145,10 @@ class ComputerCar(AbstractCar):
         nn_input = np.concatenate(([self.vel], self.get_sensor_readings()))
         _, _, _, A2 = self.neural_network.forward_pass(nn_input)
         
-        direction = 2 * A2[0] - 1 # reescalonamento para [-1,1]
+        direction = A2[0]
         acceleration_amount = A2[1]
-        brake_amount = A2[2]
         
         self.rotate(direction)
-        self.accelerate(acceleration_amount)
-        self.brake(brake_amount)
+        self.accelerate(acceleration_amount) if acceleration_amount > 0 else self.brake(acceleration_amount)
         self.reduce_speed()
             

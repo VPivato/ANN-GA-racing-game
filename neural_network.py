@@ -6,12 +6,12 @@ class NeuralNetwork:
         rng = np.random.default_rng()
         
         # Primeira camada oculta (6 neurônios)
-        self.W1 = rng.normal(0, np.sqrt(2 / 9), size=(9, 6)) # Inicialização de Kaiming
+        self.W1 = rng.normal(0, np.sqrt(2 / 9), size=(9, 6)) # Inicialização de Kaiming - sqrt(2 / fan-in)
         self.b1 = np.zeros(6)
         
-        # Camada de saída (3 neurônios)
-        self.W2 = rng.normal(0, np.sqrt(2 / 9), size=(6, 3)) # Inicialização de Xavier (coincidentemente, as fórmulas ficaram iguais)
-        self.b2 = np.zeros(3)
+        # Camada de saída (2 neurônios)
+        self.W2 = rng.normal(0, np.sqrt(2 / 8), size=(6, 2)) # Inicialização de Xavier - sqrt(2 / fan-in + fan-out)
+        self.b2 = np.zeros(2)
     
     def forward_pass(self, X):
         """Passagem e cálculo dos dados pela rede, aplicando biases e funções de ativação.
@@ -26,11 +26,11 @@ class NeuralNetwork:
         Z1 = np.dot(X, self.W1) + self.b1
         A1 = self.ReLU(Z1)
         Z2 = np.dot(A1, self.W2) + self.b2
-        A2 = self.sigmoid(Z2)
+        A2 = self.tanh(Z2)
         return Z1, A1, Z2, A2
     
     def ReLU(self, values):
         return np.maximum(0, values)
     
-    def sigmoid(self, values):
-        return 1 / (1 + np.exp(-values))
+    def tanh(self, values):
+        return (2 / (1 + np.exp(2 * -values))) - 1
