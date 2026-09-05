@@ -51,9 +51,9 @@ Ao fim de cada geração de treinamento, os melhores carros (critério de fitnes
 
 Os arquivos mais relevantes são:
 - `main.py`: define e configura o essencial da biblioteca *pygame* e junta os outros módulos em um projeto funcional.
-- `car.py`: define a classe abstrata do carro com seus atributos e métodos, que vai servir de herança para *PlayerCar* e *ComputerCar*
+- `car.py`: define a classe abstrata do carro com seus atributos e métodos, que serve de herança para *PlayerCar* e *ComputerCar*
 - `raycaster.py`: módulo responsável pelos sensores de distância que cada carro possui.
-- (planejado) `neural_network.py`: rede neural desenvolvida em NumPy, o centro do projeto.
+- `neural_network.py`: rede neural desenvolvida em NumPy, o centro do projeto.
 - (planejado) `genetic_algorithm.py`: responsável por selecionar, cruzar e mutar os melhores carros de cada época.
 
 ## Desafios técnicos
@@ -114,3 +114,4 @@ Algum dos materiais usados ao longo do projeto são:
 - ["Raycasting Tutorial (in Python)"](https://youtu.be/E18bSJezaUE?si=k-GWR9av9XXVNEwh) do canal [Pythonista_](https://www.youtube.com/@pythonista_333). Me apresentou ao conceito de raycasting, usado para os sensores de distância do carro.
 - ["Building a neural network FROM SCRATCH (no Tensorflow/Pytorch, just numpy & math)"](https://youtu.be/w8yWXqWQYmU?si=Zrc4kZJAmwRXX1E0) do canal [Samson Zhang](https://www.youtube.com/@SamsonZhangTheSalmon). O diagrama exibido no vídeo me ajudou a implementar a rede neural.
 - ["Forward Propagation in Neural Networks"](https://www.geeksforgeeks.org/deep-learning/forward-propagation-in-neural-networks/). Bom material de apoio.
+- ["Weight Initialization | Xavier | He | Zero | Symmetry Problem | Deep Learning Part 7"](https://youtu.be/lyN-OCCrhuo?si=4MUkf4xDFYQEHtzh) do canal [ByteQuest](https://www.youtube.com/@Byte_Quest). Me introduziu ao diferentes tipos de inicialização de pesos.

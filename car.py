@@ -1,6 +1,7 @@
 import pygame, numpy as np
 from raycaster import Raycaster, MAX_DISTANCE
 from utils import scale_image, get_direction
+from neural_network import NeuralNetwork
 
 WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
 RED_CAR = scale_image(pygame.image.load("img/red-car.png"), .55)
@@ -133,16 +134,23 @@ class PlayerCar(AbstractCar):
 
 class ComputerCar(AbstractCar):
     IMG = RED_CAR
-    START_POS = (165, 200)
+    START_POS = (180, 200)
+    
+    def __init__(self, max_vel, rotation_vel, acceleration=0.1):
+        super().__init__(max_vel, rotation_vel, acceleration)
+        
+        self.neural_network = NeuralNetwork()
     
     def decision(self):
-        choices = [lambda: self.accelerate(1),
-                   lambda: self.brake(1),
-                   lambda: self.rotate(-1),
-                   lambda: self.rotate(1),
-        ]
+        nn_input = np.concatenate(([self.vel], self.get_sensor_readings()))
+        _, _, _, A2 = self.neural_network.forward_pass(nn_input)
         
+        direction = 2 * A2[0] - 1 # reescalonamento para [-1,1]
+        acceleration_amount = A2[1]
+        brake_amount = A2[2]
+        
+        self.rotate(direction)
+        self.accelerate(acceleration_amount)
+        self.brake(brake_amount)
         self.reduce_speed()
-        choice = np.random.choice(choices)
-        choice()
             
