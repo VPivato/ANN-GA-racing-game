@@ -140,15 +140,23 @@ class ComputerCar(AbstractCar):
         super().__init__(max_vel, rotation_vel, acceleration)
         
         self.neural_network = NeuralNetwork()
+        self.next_checkpoint = 0
     
     def decision(self):
         nn_input = np.concatenate(([self.vel], self.get_sensor_readings()))
         _, _, _, A2 = self.neural_network.forward_pass(nn_input)
         
         direction = A2[0]
-        acceleration_amount = A2[1]
+        throttle = A2[1]
         
         self.rotate(direction)
-        self.accelerate(acceleration_amount) if acceleration_amount > 0 else self.brake(acceleration_amount)
-        self.reduce_speed()
+        self.accelerate(throttle) if throttle > 0 else self.brake(-throttle)
+    
+    def check_checkpoint(self, checkpoints):
+        if self.next_checkpoint >= len(checkpoints):
+            return
+        
+        checkp = checkpoints[self.next_checkpoint]
+        if self.collide(checkp.mask, checkp.rect.x, checkp.rect.y):
+            self.next_checkpoint += 1
             
