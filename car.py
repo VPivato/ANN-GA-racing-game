@@ -125,6 +125,14 @@ class AbstractCar:
         """
         
         return np.array([ray.distance / MAX_DISTANCE for ray in self.raycaster.rays])
+    
+    def reset(self) -> None:
+        """Redefine atributos do carro para os valores iniciais, como posição, velocidade e ângulo"""
+        
+        self.pos = self.START_POS
+        self.vel = 0
+        self.angle = 0
+        self.destroyed = False
 
 
 class PlayerCar(AbstractCar):
@@ -134,7 +142,7 @@ class PlayerCar(AbstractCar):
 
 class ComputerCar(AbstractCar):
     IMG = RED_CAR
-    START_POS = (180, 200)
+    START_POS = (185, 200)
     
     def __init__(self, max_vel, rotation_vel, acceleration=0.1):
         super().__init__(max_vel, rotation_vel, acceleration)

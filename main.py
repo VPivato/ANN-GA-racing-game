@@ -2,14 +2,17 @@ import pygame
 from car import PlayerCar, ComputerCar
 from track import TRACK, TRACK_BORDER_MASK, FINISH, FINISH_MASK
 from checkpoint import Checkpoint
+import numpy as np
+from neural_network import NeuralNetwork
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ANN + GA Racing Game")
 
 FPS = 60
+MAX_GENERATION_FRAMES = 5 * FPS # Segundos
 
-def draw(win, images, player_car, computer_car):
+def draw(win, images, player_car, car_population):
     win.fill((0,0,0))
     
     for img, pos in images:
@@ -18,7 +21,8 @@ def draw(win, images, player_car, computer_car):
     for checkp in checkpoints:
         checkp.draw(win)
     player_car.draw(win, show_mask=False, show_rect=False, show_rays=False)
-    computer_car.draw(win, show_mask=False, show_rect=False, show_rays=False)
+    for car in car_population:
+        car.draw(win, show_mask=False, show_rect=False, show_rays=False)
     pygame.display.update()
 
 def player_movement(player_car):
@@ -36,10 +40,23 @@ def player_movement(player_car):
     player_car.reduce_speed()
     player_car.move()
 
+car_population = [ComputerCar(4, 4) for _ in range(10)]
+
+def next_generation():
+    player_car.reset()
+    for car in car_population:
+        car.reset()
+        car.next_checkpoint = 0
+
+def get_fitness():
+    fitness = []
+    for car in car_population:
+        fitness.append(car.next_checkpoint)
+    return np.sort(fitness, descending=True)
+
 run = True
 clock = pygame.time.Clock()
 player_car = PlayerCar(4, 4)
-computer_car = ComputerCar(4, 4)
 images = [(TRACK, (0,0)),
           (FINISH, (155, 250))]
 checkpoints = [Checkpoint((197.5, 149.5), (83.2, 5), 3.4),
@@ -75,6 +92,7 @@ checkpoints = [Checkpoint((197.5, 149.5), (83.2, 5), 3.4),
                Checkpoint((254.0, 457.5), (87.0, 5), -90.0),
                Checkpoint((194.0, 368.0), (90.0, 5), 180.0)]
 
+generation_frame_count = 0
 while run:
     clock.tick(FPS)
     
@@ -87,17 +105,26 @@ while run:
     player_movement(player_car)
     player_car.update_car()
     
-    computer_car.decision()
-    computer_car.update_car()
-    computer_car.move()
-    computer_car.check_checkpoint(checkpoints)
+    for car in car_population:
+        car.decision()
+        car.update_car()
+        car.move()
+        car.check_checkpoint(checkpoints)
     
-    draw(WINDOW, images, player_car, computer_car)
+    draw(WINDOW, images, player_car, car_population)
     
     if player_car.collide(TRACK_BORDER_MASK) is not None:
         player_car.destroyed = True
     
-    if computer_car.collide(TRACK_BORDER_MASK) is not None:
-        computer_car.destroyed = True
+    for car in car_population:
+        if not car.destroyed and car.collide(TRACK_BORDER_MASK) is not None:
+            car.destroyed = True
+    
+    if generation_frame_count >= MAX_GENERATION_FRAMES or all(car.destroyed for car in car_population):
+        fitness = get_fitness()
+        next_generation()
+        generation_frame_count = 0
+    
+    generation_frame_count += 1
 
 pygame.quit()
