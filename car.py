@@ -8,7 +8,7 @@ RED_CAR = scale_image(pygame.image.load("img/red-car.png"), .55)
 
 
 class AbstractCar:
-    def __init__(self, max_vel, rotation_vel, acceleration=.1):
+    def __init__(self, max_vel=4, rotation_vel=4, acceleration=.1):
         self.img = self.IMG
         
         self.pos = pygame.Vector2(self.START_POS)
@@ -144,7 +144,7 @@ class ComputerCar(AbstractCar):
     IMG = RED_CAR
     START_POS = (185, 200)
     
-    def __init__(self, max_vel, rotation_vel, acceleration=0.1):
+    def __init__(self, max_vel=4, rotation_vel=4, acceleration=0.1):
         super().__init__(max_vel, rotation_vel, acceleration)
         
         self.neural_network = NeuralNetwork()

@@ -3,7 +3,7 @@ from car import PlayerCar, ComputerCar
 from track import TRACK, TRACK_BORDER_MASK, FINISH, FINISH_MASK
 from checkpoint import Checkpoint
 import numpy as np
-from neural_network import NeuralNetwork
+from genetic_algorithm import GeneticAlgorithm
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -40,23 +40,9 @@ def player_movement(player_car):
     player_car.reduce_speed()
     player_car.move()
 
-car_population = [ComputerCar(4, 4) for _ in range(10)]
-
-def next_generation():
-    player_car.reset()
-    for car in car_population:
-        car.reset()
-        car.next_checkpoint = 0
-
-def get_fitness():
-    fitness = []
-    for car in car_population:
-        fitness.append(car.next_checkpoint)
-    return np.sort(fitness, descending=True)
-
 run = True
 clock = pygame.time.Clock()
-player_car = PlayerCar(4, 4)
+player_car = PlayerCar()
 images = [(TRACK, (0,0)),
           (FINISH, (155, 250))]
 checkpoints = [Checkpoint((197.5, 149.5), (83.2, 5), 3.4),
@@ -92,6 +78,9 @@ checkpoints = [Checkpoint((197.5, 149.5), (83.2, 5), 3.4),
                Checkpoint((254.0, 457.5), (87.0, 5), -90.0),
                Checkpoint((194.0, 368.0), (90.0, 5), 180.0)]
 
+car_population = [ComputerCar() for _ in range(30)]
+GA = GeneticAlgorithm(car_population)
+
 generation_frame_count = 0
 while run:
     clock.tick(FPS)
@@ -121,8 +110,10 @@ while run:
             car.destroyed = True
     
     if generation_frame_count >= MAX_GENERATION_FRAMES or all(car.destroyed for car in car_population):
-        fitness = get_fitness()
-        next_generation()
+        car_population = GA.create_new_population()
+        GA.population = car_population
+        for c in car_population:
+            c.reset()
         generation_frame_count = 0
     
     generation_frame_count += 1

@@ -1,6 +1,6 @@
 import numpy as np
 
-# Neurônios: 9 > 6 > 3
+# Neurônios: 9 > 6 > 2
 class NeuralNetwork:
     def __init__(self):
         rng = np.random.default_rng()
@@ -10,7 +10,7 @@ class NeuralNetwork:
         self.b1 = np.zeros(6)
         
         # Camada de saída (2 neurônios)
-        self.W2 = rng.normal(0, np.sqrt(2 / 8), size=(6, 2)) # Inicialização de Xavier - sqrt(2 / fan-in + fan-out)
+        self.W2 = rng.normal(0, np.sqrt(2 / 8), size=(6, 2)) # Inicialização de Xavier - sqrt(2 / (fan-in + fan-out))
         self.b2 = np.zeros(2)
     
     def forward_pass(self, X):
@@ -33,4 +33,4 @@ class NeuralNetwork:
         return np.maximum(0, values)
     
     def tanh(self, values):
-        return (2 / (1 + np.exp(2 * -values))) - 1
+        return np.tanh(values)
