@@ -21,6 +21,7 @@ class AbstractCar:
         self.angle = 0
         
         self.destroyed = False
+        self.finished = False
         
         self.raycaster = Raycaster(self)
         
@@ -64,7 +65,7 @@ class AbstractCar:
             e valores positivos rotacionam para a direita.
         """
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         self.angle -= (self.rotation_vel * amount) % 360
@@ -76,7 +77,7 @@ class AbstractCar:
             amount: Valor no intervalo [0,1].
         """
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         self.vel = min(self.vel + self.acceleration * amount, self.max_vel)
@@ -88,7 +89,7 @@ class AbstractCar:
             amount: Valor no intervalo [0,1].
         """
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         self.vel = max(self.vel - self.acceleration * amount, 0)
@@ -96,7 +97,7 @@ class AbstractCar:
     def reduce_speed(self) -> None:
         """Reduz a velocidade do carro em metade da aceleração, até um mínimo de 0."""
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         self.vel = max(self.vel - self.acceleration / 2, 0)
@@ -104,7 +105,7 @@ class AbstractCar:
     def move(self) -> None:
         """Atualiza a posição do carro, deslocando-o com base em sua velocidade."""
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         self.pos -= get_direction(self.angle) * self.vel
@@ -112,7 +113,7 @@ class AbstractCar:
     def collide(self, mask:pygame.mask.Mask, x:int = 0, y:int = 0) -> tuple | None:
         """Retorna as coordenadas do primeiro pixel que colidiu em uma tupla (x, y), ou None se não houver colisão."""
         
-        if self.destroyed:
+        if self.destroyed or self.finished:
             return
         
         offset = (int(self.rotated_rect.x - x), int(self.rotated_rect.y - y))
@@ -133,6 +134,7 @@ class AbstractCar:
         self.vel = 0
         self.angle = 0
         self.destroyed = False
+        self.finished = False
 
 
 class PlayerCar(AbstractCar):

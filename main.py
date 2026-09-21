@@ -12,7 +12,7 @@ pygame.display.set_caption("ANN + GA Racing Game")
 font = pygame.font.SysFont("arial", 80)
 
 FPS = 60
-MAX_GENERATION_FRAMES = 5 * FPS
+MAX_GENERATION_FRAMES = 30 * FPS
 generation_frame_count = 0
 current_generation = 0
 
@@ -114,9 +114,21 @@ while run:
     if player_car.collide(TRACK_BORDER_MASK) is not None:
         player_car.destroyed = True
     
+    player_finish_colision = player_car.collide(FINISH_MASK, x=155, y=250)
+    if player_finish_colision is not None and player_finish_colision[1] == 0: # Destroi o carro se ele cruzar a linha de chegada pela direção errada.
+        player_car.destroyed = True
+    if player_finish_colision is not None and player_finish_colision[1] > 0: # Compleção do percurso.
+        player_car.finished = True
+    
     for car in car_population:
         if not car.destroyed and car.collide(TRACK_BORDER_MASK) is not None:
             car.destroyed = True
+        
+        car_finish_colision = car.collide(FINISH_MASK, x=155, y=250)
+        if car_finish_colision is not None and car_finish_colision[1] == 0: # Destroi o carro se ele cruzar a linha de chegada pela direção errada.
+            car.destroyed = True
+        if not car.destroyed and car_finish_colision is not None and car_finish_colision[1] > 0: # Compleção do percurso.
+            car.finished = True
     
     if generation_frame_count >= MAX_GENERATION_FRAMES or all(car.destroyed for car in car_population):
         if current_generation % 5 == 0:
