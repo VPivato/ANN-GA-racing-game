@@ -129,7 +129,7 @@ class AbstractCar:
     def reset(self) -> None:
         """Redefine atributos do carro para os valores iniciais, como posição, velocidade e ângulo"""
         
-        self.pos = self.START_POS
+        self.pos = pygame.Vector2(self.START_POS)
         self.vel = 0
         self.angle = 0
         self.destroyed = False
@@ -148,6 +148,10 @@ class ComputerCar(AbstractCar):
         super().__init__(max_vel, rotation_vel, acceleration)
         
         self.neural_network = NeuralNetwork()
+        self.next_checkpoint = 0
+    
+    def reset(self):
+        super().reset()
         self.next_checkpoint = 0
     
     def decision(self):

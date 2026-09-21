@@ -20,8 +20,8 @@ class NeuralNetwork:
             Tupla com 4 np.array: (Z1, A1, Z2, A2).
                 Z1: produto escalar entre X (valores de entrada) e W1 (pesos da primeira camada oculta) + b1 (bias).
                 A1: Z1 após passar pela função de ativação ReLU.
-                Z2: produto escalar entre A1 e W2 (pesos da segunda camada oculta) + b2 (bias).
-                A2: Z2 após passar pela função de ativação sigmoid.
+                Z2: produto escalar entre A1 e W2 (pesos da camada de saída) + b2 (bias).
+                A2: Z2 após passar pela função de ativação tanh.
         """
         Z1 = np.dot(X, self.W1) + self.b1
         A1 = self.ReLU(Z1)
@@ -34,3 +34,6 @@ class NeuralNetwork:
     
     def tanh(self, values):
         return np.tanh(values)
+    
+    def get_weights(self):
+        return self.W1, self.b1, self.W2, self.b2

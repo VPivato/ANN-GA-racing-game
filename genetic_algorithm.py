@@ -1,18 +1,15 @@
 import numpy as np
 from car import ComputerCar
 from neural_network import NeuralNetwork
+from datetime import datetime
+from pathlib import Path
 
 class GeneticAlgorithm:
     def __init__(self, population):
         self.population = population
         self.population_size = len(population)
     
-    def randomize(self):
-        # método de teste, irrelevante para o projeto final
-        for individual in self.population:
-            individual.neural_network = NeuralNetwork()
-    
-    def get_best_individuals(self) -> np.ndarray:
+    def get_best_individuals(self) -> np.ndarray[ComputerCar]:
         best = sorted(self.population, key=lambda item: item.next_checkpoint, reverse=True)
         return np.array(best)
     
@@ -59,7 +56,7 @@ class GeneticAlgorithm:
         
         return child
     
-    def mutation(self, neural_network, mutation_rate = .05, mutation_strength = .1):
+    def mutation(self, neural_network, mutation_rate = .06, mutation_strength = .12):
         rng = np.random.default_rng()
         
         mask = rng.random(neural_network.W1.shape) < mutation_rate
@@ -83,7 +80,7 @@ class GeneticAlgorithm:
         new_population = list(elites)
         
         while len(new_population) < self.population_size:
-            p1, p2 = np.random.choice(parents, size=2)
+            p1, p2 = np.random.choice(parents, size=2, replace=False)
             child = self.crossover(p1, p2)
             new_population.append(child)
         
@@ -91,11 +88,8 @@ class GeneticAlgorithm:
             self.mutation(i.neural_network)
         
         return new_population
-            
-            
-        
-
-# TESTE
-if __name__ == "__main__":
-    pop = [ComputerCar(4,4) for _ in range(10)]
-    GA = GeneticAlgorithm(pop)
+    
+    def save_best_weights(self, generation:int):
+        path = Path(__file__).parent / "weights" / f"{datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}-G{generation}.npz"
+        best = self.get_best_individuals()[0]
+        return np.savez(path, *best.neural_network.get_weights())

@@ -5,12 +5,17 @@ from checkpoint import Checkpoint
 import numpy as np
 from genetic_algorithm import GeneticAlgorithm
 
+pygame.init()
+
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ANN + GA Racing Game")
+font = pygame.font.SysFont("arial", 80)
 
 FPS = 60
-MAX_GENERATION_FRAMES = 5 * FPS # Segundos
+MAX_GENERATION_FRAMES = 5 * FPS
+generation_frame_count = 0
+current_generation = 0
 
 def draw(win, images, player_car, car_population):
     win.fill((0,0,0))
@@ -20,9 +25,14 @@ def draw(win, images, player_car, car_population):
     
     for checkp in checkpoints:
         checkp.draw(win)
+    
     player_car.draw(win, show_mask=False, show_rect=False, show_rays=False)
+    
     for car in car_population:
         car.draw(win, show_mask=False, show_rect=False, show_rays=False)
+    
+    label = font.render(f"Gen {current_generation}", 1, (255, 255, 255, 255))
+    win.blit(label, (10, HEIGHT - 90))
     pygame.display.update()
 
 def player_movement(player_car):
@@ -78,10 +88,10 @@ checkpoints = [Checkpoint((197.5, 149.5), (83.2, 5), 3.4),
                Checkpoint((254.0, 457.5), (87.0, 5), -90.0),
                Checkpoint((194.0, 368.0), (90.0, 5), 180.0)]
 
-car_population = [ComputerCar() for _ in range(30)]
+car_population = [ComputerCar() for _ in range(40)]
 GA = GeneticAlgorithm(car_population)
 
-generation_frame_count = 0
+
 while run:
     clock.tick(FPS)
     
@@ -110,11 +120,25 @@ while run:
             car.destroyed = True
     
     if generation_frame_count >= MAX_GENERATION_FRAMES or all(car.destroyed for car in car_population):
+        if current_generation % 5 == 0:
+            GA.save_best_weights(current_generation)
+        
+        best_checkpoint = GA.get_best_individuals()[0].next_checkpoint
+        if best_checkpoint < 6:
+            MAX_GENERATION_FRAMES = 5 * FPS
+        elif best_checkpoint < 15:
+            MAX_GENERATION_FRAMES = 10 * FPS
+        elif best_checkpoint < 22:
+            MAX_GENERATION_FRAMES = 15 * FPS
+        else:
+            MAX_GENERATION_FRAMES = 20 * FPS
+        
         car_population = GA.create_new_population()
         GA.population = car_population
         for c in car_population:
             c.reset()
         generation_frame_count = 0
+        current_generation += 1
     
     generation_frame_count += 1
 
