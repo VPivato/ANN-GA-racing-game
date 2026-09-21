@@ -1,8 +1,7 @@
-import pygame
+import pygame, json, numpy as np
 from car import PlayerCar, ComputerCar
 from track import TRACK, TRACK_BORDER_MASK, FINISH, FINISH_MASK
 from checkpoint import Checkpoint
-import numpy as np
 from genetic_algorithm import GeneticAlgorithm
 
 pygame.init()
@@ -122,6 +121,16 @@ while run:
     if generation_frame_count >= MAX_GENERATION_FRAMES or all(car.destroyed for car in car_population):
         if current_generation % 5 == 0:
             GA.save_best_weights(current_generation)
+            
+        data = {
+            "generation": current_generation,
+            "best_fitness": GA.get_best_individuals()[0].next_checkpoint / len(checkpoints),
+            "average_fitness": np.mean([[i.next_checkpoint for i in GA.get_best_individuals()]]) / len(checkpoints),
+            "worst_fitness": GA.get_best_individuals()[-1].next_checkpoint
+        }
+        with open("data/history.jsonl", "a") as f:
+            json.dump(data, f)
+            f.write("\n")
         
         best_checkpoint = GA.get_best_individuals()[0].next_checkpoint
         if best_checkpoint < 6:

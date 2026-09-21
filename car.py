@@ -3,8 +3,8 @@ from raycaster import Raycaster, MAX_DISTANCE
 from utils import scale_image, get_direction
 from neural_network import NeuralNetwork
 
-WHITE_CAR = scale_image(pygame.image.load("img/white-car.png"), .55)
-RED_CAR = scale_image(pygame.image.load("img/red-car.png"), .55)
+WHITE_CAR = scale_image(pygame.image.load("src/img/white-car.png"), .55)
+RED_CAR = scale_image(pygame.image.load("src/img/red-car.png"), .55)
 
 
 class AbstractCar:
