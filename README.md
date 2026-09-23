@@ -14,7 +14,6 @@ Bibliotecas centrais usadas:
 - Python `3.13.15`
 - Pygame `2.6.1`
 - NumPy `2.5.2`
-- Pandas `3.0.5` (planejado - logging e estatísticas. Rede neural usará apenas NumPy)
 
 Rede Neural:
 - Cada carro possui uma rede neural simples: 9 valores de entrada, 6 neurônios da camada oculta com ativação ReLU, e 2 neurônios na camada de saída com ativação tanh. A rede neural retorna dois valores no intervalo [-1, 1], que são usados para controlar a direção e velocidade/freio do carro.
@@ -43,7 +42,7 @@ flowchart TD
 ```
 
 A rede neural recebe 9 valores iniciais: velocidade e a leitura dos 8 sensores de distância. E retorna dois, que controlam a decisão do carro a cada frame:
-- Um valor [-1, 1] que representa a direção de rotação. Valores intermediários, como 0.5, significam uma rotação mais suave.
+- Um valor [-1, 1] que representa a direção de rotação. Valores intermediários, como 0.5 ou -0.5, significam uma rotação mais suave.
 - Um valor [-1, 1] que representa a quantidade de aceleração. Valores negativos freiam o carro, em vez de acelerar.
 
 Ao fim de cada geração de treinamento, os melhores carros (aqueles que passaram por mais checkpoints) são selecionados pelo Algoritmo Genético para reproduzir ([crossover](https://www.geeksforgeeks.org/machine-learning/crossover-in-genetic-algorithm/)) e gerar descendentes mais aptos. O ciclo continua por N gerações.
@@ -59,7 +58,10 @@ Os arquivos mais relevantes são:
 
 ## Desafios técnicos
 
-(to do)
+O desenvolvimento do ambiente simulado, feito em pygame, se mostrou a parte que mais tomou tempo. Antes do início do projeto, achei que a rede neural e o algoritmo genético seriam as seções mais desafiadoras. Mas me encontrei voltando incessantemente à implementação do jogo.
+Foi uma quebra de expectativa desagradável, pois, enquanto queria aprender mais sobre redes neurais e algoritmos genéticos, essas partes foram as que menos demandaram tempo.
+
+Em relação à implementação da rede neural, não encontrei desafios significativos, apenas pequenas inconveniências. Como, por exemplo, decidir o formato de saída dos valores. De inicio, tinha definido 3 neurônios de saída (aceleração, freio, direção), depois, simplifiquei para 2 saídas (como explicado na seção [Como funciona](#como-funciona))
 
 ## Resultados
 
@@ -67,7 +69,8 @@ Como é possível ver nos três GIFs que setão no início do arquivo, a rede ne
 É importante notar que, às vezes, uma simulação pode iniciar com um bom carro desde a geração 0, enquanto os carros de outras simulações têm dificuldades logo na primeira curva. Isso se deve à inicialização de pesos da rede neural e, dado tempo suficiente, mesmo o pior carro será capaz de completar o percurso.
 
 Abaixo estão alguns gráficos mostrando a evolução do fitness por geração:
-(to do)
+<img src="src/img/best_fitness.png" style="width: 800px;" />
+<img src="src/img/average_fitness.png" style="width: 800px;" />
 
 ## Como executar
 
