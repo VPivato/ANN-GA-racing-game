@@ -90,6 +90,6 @@ class GeneticAlgorithm:
         return new_population
     
     def save_best_weights(self, generation:int):
-        path = Path(__file__).parent / "weights" / f"{datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}-G{generation}.npz"
+        path = Path(__file__).parent / "weights" / f"{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}-G{generation}.npz"
         best = self.get_best_individuals()[0]
         return np.savez(path, *best.neural_network.get_weights())

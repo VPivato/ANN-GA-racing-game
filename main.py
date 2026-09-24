@@ -62,8 +62,7 @@ def write_to_history():
     data = {
         "generation": current_generation,
         "best_fitness": best[0].next_checkpoint / len(checkpoints),
-        "average_fitness": np.mean([i.next_checkpoint for i in best]) / len(checkpoints),
-        "worst_fitness": best[-1].next_checkpoint
+        "average_fitness": np.mean([i.next_checkpoint for i in best]) / len(checkpoints)
     }
     with open("data/history.jsonl", "a") as f:
         json.dump(data, f)
