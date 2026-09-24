@@ -8,9 +8,9 @@ Geração 0 | Geração 16 | Geração 70
 
 Carro autônomo aprende a desviar de obstáculos em uma pista. Treinado por Rede Neural e Algoritmo Genético, ambos desenvolvidos sem o auxílio de bibliotecas de aprendizagem de máquina.
 
-A motivação desse projeto surgiu após eu assistir o vídeo ["Can I make a Better AI Than AI"](https://youtu.be/GGWHjAyKJCA?si=wAQap95mO3w7fEDn) do canal [commonLuke](https://www.youtube.com/@commonLuke). Decidi que queria fazer algo mais completo do que normalmente faço, sem usar bibliotecas de ML, para ter um entendimento mais profundo sobre o funcionamento de uma rede neural. Até então, minha experiência com Machine Learning foi baseada quase que exclusivamente em [Tensorflow](https://www.tensorflow.org/?hl=pt-br).
+A motivação desse projeto surgiu após eu assistir ao vídeo ["Can I make a Better AI Than AI"](https://youtu.be/GGWHjAyKJCA?si=wAQap95mO3w7fEDn) do canal [commonLuke](https://www.youtube.com/@commonLuke). Decidi que queria fazer algo mais completo do que meus projetos costumam ser, sem usar bibliotecas de ML, para ter um entendimento mais profundo sobre o funcionamento de uma rede neural. Até então, minha experiência com Machine Learning foi baseada quase que exclusivamente em [Tensorflow](https://www.tensorflow.org/?hl=pt-br).
 
-É esperado que o projeto funcione a partir do Python `3.10+`. Caso encontre problemas na execução, é recomendado usar a mesma versão em que o projeto foi desenvolvido: `3.13.x`
+O projeto deve funcionar a partir do Python `3.10+`. Caso encontre problemas na execução, é recomendado usar a mesma versão em que o projeto foi desenvolvido: `3.13.x`
 
 Bibliotecas centrais usadas:
 - Pygame `2.6.1`
@@ -28,7 +28,7 @@ Lógica do carro
 ```mermaid
 flowchart TD
     A[Carro] --  Velocidade e sensores --> B((Rede Neural))
-    B -- Direção, aceleração --> C[Ação]
+    B -- Direção, aceleração/freio --> C[Ação]
 ```
 
 <hr />
@@ -39,18 +39,17 @@ flowchart TD
     D[Simulação] --> E[Seleção]
     E --> F[Crossover]
     F --> G[Mutação]
-    G --> H{Nª geração?}
-    H -- Sim --> I(Salva pesos do melhor carro)
-    H -- Não --> D
+    G --> H{Pesos salvos a cada 5 gerações}
+    H --> D
 ```
 
-A rede neural recebe 9 valores iniciais: velocidade e a leitura dos 8 sensores de distância. E retorna dois, que controlam a decisão do carro a cada frame:
+A rede neural recebe 9 valores iniciais: velocidade e a leitura dos 8 sensores de distância, e retorna dois, que controlam a decisão do carro a cada frame:
 - Um valor [-1, 1] que representa a direção de rotação. Valores intermediários, como 0.5 ou -0.5, significam uma rotação mais suave.
 - Um valor [-1, 1] que representa a quantidade de aceleração. Valores negativos freiam o carro, em vez de acelerar.
 
-Ao fim de cada geração de treinamento, os melhores carros (aqueles que passaram por mais checkpoints) são selecionados pelo Algoritmo Genético para reproduzir ([crossover](https://www.geeksforgeeks.org/machine-learning/crossover-in-genetic-algorithm/)) e gerar descendentes mais aptos. O ciclo continua por N gerações.
+Ao fim de cada geração de treinamento, os melhores carros (aqueles que passaram por mais checkpoints) são selecionados pelo Algoritmo Genético para reproduzir ([crossover](https://www.geeksforgeeks.org/machine-learning/crossover-in-genetic-algorithm/)) e gerar descendentes mais aptos. O ciclo continua até que o programa seja encerrado. O salvamento dos pesos do melhor carro ocorre a cada 5 gerações.
 
-Abaixo está uma visualização dos sensores que cada carro possui. As linhas verdes são os checkpoints:
+Abaixo está uma visualização dos sensores e checkpoints. As linhas vermelhas que saem do carro são os sensores, as linhas verdes espalhadas pela pista são os checkpoints:
 <img src="src/img/car_sensors.png" style="width: 400px;" />
 
 ## Estrutura do projeto
@@ -68,11 +67,11 @@ Os arquivos mais relevantes são:
 O desenvolvimento do ambiente simulado, feito em pygame, se mostrou a parte que mais tomou tempo. Antes do início do projeto, achei que a rede neural e o algoritmo genético seriam as seções mais desafiadoras. Mas me encontrei voltando incessantemente à implementação do jogo.
 Foi uma quebra de expectativa desagradável, pois, enquanto queria aprender mais sobre redes neurais e algoritmos genéticos, essas partes foram as que menos demandaram tempo.
 
-Em relação à implementação da rede neural, não encontrei desafios significativos, apenas pequenas inconveniências. Como, por exemplo, decidir o formato de saída dos valores. De inicio, tinha definido 3 neurônios de saída (aceleração, freio, direção), depois, simplifiquei para 2 saídas (como explicado na seção [Como funciona](#como-funciona))
+Em relação à implementação da rede neural, não encontrei desafios significativos, apenas pequenas inconveniências, como decidir o formato de saída dos valores. De início, tinha definido 3 neurônios de saída (aceleração, freio, direção), depois, simplifiquei para 2 saídas (como explicado na seção [Como funciona](#como-funciona))
 
 ## Resultados
 
-Como é possível ver nos três GIFs que estão no início do arquivo, a rede neural é capaz de se adaptar bem à pista e, em menos de 15 minutos de treinamento, um resultado satisfatório já é capaz de ser observado.
+Como é possível ver nos três GIFs que estão no início, a rede neural é capaz de se adaptar bem à pista e, em menos de 15 minutos de treinamento, já é possível observar um resultado satisfatório.
 É importante notar que, às vezes, uma simulação pode iniciar com um bom carro desde a geração 0, enquanto os carros de outras simulações têm dificuldades logo na primeira curva. Isso se deve à inicialização de pesos da rede neural e, dado tempo suficiente, mesmo o pior carro será capaz de completar o percurso.
 
 Abaixo está um gráfico mostrando a evolução do fitness por geração (melhor carro e média da população):
@@ -119,16 +118,22 @@ pip install -r requirements.txt
 ```
 
 6. Execute `main.py`.
+### Windows (Powershell)
 ```bash
 py main.py
 ```
 
+### macOS / Linux (Bash)
+```bash
+python3 main.py
+```
+
 ## Referências
 
-Algum dos materiais usados ao longo do projeto são:
+Alguns dos materiais usados ao longo do projeto são:
 - ["Can I make a Better AI Than AI"](https://youtu.be/GGWHjAyKJCA?si=wAQap95mO3w7fEDn) do canal [commonLuke](https://www.youtube.com/@commonLuke). Motivação principal do projeto.
 - Playlist ["Pygame Car Racing Tutorial"](https://www.youtube.com/playlist?list=PLzMcBGfZo4-kmY7Nh4kI9kPPnxJ5JMRPj) do canal [Tech With Tim](https://www.youtube.com/@TechWithTim). Os dois primeiros vídeos me auxiliaram a criar o ambiente do jogo.
 - ["Raycasting Tutorial (in Python)"](https://youtu.be/E18bSJezaUE?si=k-GWR9av9XXVNEwh) do canal [Pythonista_](https://www.youtube.com/@pythonista_333). Me apresentou ao conceito de raycasting, usado para os sensores de distância do carro.
 - ["Building a neural network FROM SCRATCH (no Tensorflow/Pytorch, just numpy & math)"](https://youtu.be/w8yWXqWQYmU?si=Zrc4kZJAmwRXX1E0) do canal [Samson Zhang](https://www.youtube.com/@SamsonZhangTheSalmon). O diagrama exibido no vídeo me ajudou a implementar a rede neural.
 - ["Forward Propagation in Neural Networks"](https://www.geeksforgeeks.org/deep-learning/forward-propagation-in-neural-networks/). Bom material de apoio.
-- ["Weight Initialization | Xavier | He | Zero | Symmetry Problem | Deep Learning Part 7"](https://youtu.be/lyN-OCCrhuo?si=4MUkf4xDFYQEHtzh) do canal [ByteQuest](https://www.youtube.com/@Byte_Quest). Me introduziu ao diferentes tipos de inicialização de pesos.
+- ["Weight Initialization | Xavier | He | Zero | Symmetry Problem | Deep Learning Part 7"](https://youtu.be/lyN-OCCrhuo?si=4MUkf4xDFYQEHtzh) do canal [ByteQuest](https://www.youtube.com/@Byte_Quest). Me introduziu aos diferentes tipos de inicialização de pesos.
